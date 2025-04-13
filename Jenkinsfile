@@ -34,9 +34,15 @@ pipeline {
         stage("Sonarqube Analysis "){
             steps{
                 withSonarQubeEnv('sonar-server') {
-                    sh ''' mvn sonar:sonar -Dsonar.url=http://localhost:9000/ -Dsonar.login=sqa_a5cbb592d57dd8f885425eac5cd5fdcfc240cb40 -Dsonar.projectName=devsecops \
-                    -Dsonar.java.binaries=. \
-                    -Dsonar.projectKey=devsecops '''
+                    //sh ''' mvn sonar:sonar -Dsonar.url=http://localhost:9000/ -Dsonar.login=sqa_a5cbb592d57dd8f885425eac5cd5fdcfc240cb40 -Dsonar.projectName=devsecops \
+                    //-Dsonar.java.binaries=. \
+                    //-Dsonar.projectKey=devsecops '''
+                    sh '''
+                        mvn sonar:sonar \
+                        -Dsonar.projectName=devsecops \
+                        -Dsonar.projectKey=devsecops \
+                        -Dsonar.java.binaries=.
+                        '''
     
                 }
             }
