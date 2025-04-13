@@ -8,6 +8,7 @@ pipeline {
     
     environment {
         SCANNER_HOME=tool 'sonar-scanner'
+        DOCKER_CREDENTIALS_ID = 'docker-hub-credentials'
     }
     
     stages{
@@ -53,29 +54,34 @@ pipeline {
                 sh " mvn clean install"
             }
         }
-        
-        stage("Docker Build & Push"){
-            steps{
-                script{
-                   withDockerRegistry(credentialsId: '58be877c-9294-410e-98ee-6a959d73b352', toolName: 'docker') {
-                        
-                        sh "docker build -t image1 ."
-                        sh "docker tag image1 adijaiswal/pet-clinic123:latest "
-                        sh "docker push adijaiswal/pet-clinic123:latest "
-                    }
+        stage('Build Docker Image') {
+            steps {
+                sh 'docker build -t barathkumar29/devsecops-java:v1 .'
+            }
+        }
+        stage('Push to DockerHub') {
+            steps {
+                withCredentials([usernamePassword(credentialsId: DOCKER_CREDENTIALS_ID, usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASS')]) {
+                    sh '''
+                    echo "$DOCKER_PASS" | docker login -u "$DOCKER_USER" --password-stdin
+                    docker push barathkumar29/devsecops-java:v1
+                    '''
                 }
             }
         }
         
         stage("TRIVY"){
             steps{
-                sh " trivy image adijaiswal/pet-clinic123:latest"
+                sh " trivy image barathkumar29/devsecops-java:v1"
             }
         }
         
-        stage("Deploy To Tomcat"){
+        stage("Kubernetes Deploy"){
             steps{
-                sh "cp  /var/lib/jenkins/workspace/CI-CD/target/petclinic.war /opt/apache-tomcat-9.0.65/webapps/ "
+                sh """
+                    kubectl apply -f k8s/deployment.yaml
+                    kubectl apply -f k8s/service.yaml
+                    """
             }
         }
     }
