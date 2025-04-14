@@ -18,7 +18,11 @@ pipeline {
                 git branch: 'main', changelog: false, poll: false, url: 'https://github.com/jkbarathkumar/devsecops'
             }
         }
-        
+        stage('Secrets Scan') {
+            steps {
+                sh 'gitleaks detect --source=. --report-path=gitleaks-report.json --verbose'
+            }
+        }
         stage("Compile"){
             steps{
                 sh "mvn clean compile"
