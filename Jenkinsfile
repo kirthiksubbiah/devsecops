@@ -78,7 +78,7 @@ pipeline {
         
         stage("TRIVY"){
             steps{
-                sh " trivy image barathkumar29/devsecops-java:v1"
+                sh "trivy image barathkumar29/devsecops-java:v1"
             }
         }
         
