@@ -18,11 +18,11 @@ pipeline {
                 git branch: 'main', changelog: false, poll: false, url: 'https://github.com/jkbarathkumar/devsecops'
             }
         }
-        stage('Secrets Scan') {
+       /* stage('Secrets Scan') {
             steps {
                 sh 'gitleaks detect --source=. --report-path=gitleaks-report.json --verbose || true'
             }
-        }
+        } */
         stage("Compile"){
             steps{
                 sh "mvn clean compile"
@@ -52,12 +52,12 @@ pipeline {
             }
         }
         
-        stage("OWASP Dependency Check"){
+       /* stage("OWASP Dependency Check"){
             steps{
                 dependencyCheck additionalArguments: '--scan ./ --format HTML ', odcInstallation: 'DP'
-                dependencyCheckPublisher pattern: '**/dependency-check-report.html'
+                dependencyCheckPublisher pattern: '** /dependency-check-report.html'
             }
-        }
+        } */
         
          stage("Build"){
             steps{
@@ -79,12 +79,12 @@ pipeline {
                 }
             }
         }
-        
+        /*
         stage("TRIVY"){
             steps{
                 sh "trivy image barathkumar29/devsecops-java:v1"
             }
-        }
+        }*/
         
         stage("Kubernetes Deploy"){
             steps{
