@@ -68,7 +68,7 @@ pipeline {
             }
         }
 
-        stage("Kubernetes Deploy") {
+        stage("Kubernetes Deploy") { 
             steps {
                 sh """
                     kubectl apply -f k8s/deployment.yaml
